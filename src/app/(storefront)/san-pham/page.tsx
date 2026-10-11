@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { Suspense } from "react";
 import { ArrowRight, Truck } from "lucide-react";
 import { ProductCatalog } from "@/components/storefront/product-catalog";
 
@@ -7,6 +8,30 @@ export const metadata: Metadata = {
   title: "Sản phẩm bánh tai",
   description: "Chọn bánh tai có đường gừng hoặc không đường, 50.000đ / 500g.",
 };
+
+function ProductCatalogSkeleton() {
+  return (
+    <div
+      aria-label="Đang tải danh sách sản phẩm"
+      aria-busy="true"
+      className="grid gap-6 md:grid-cols-2"
+    >
+      {[0, 1].map((item) => (
+        <div
+          key={item}
+          className="overflow-hidden rounded-[1.75rem] border border-brown/5 bg-white shadow-sm"
+        >
+          <div className="aspect-[16/9] animate-pulse bg-brown/10" />
+          <div className="space-y-3 p-5 sm:p-7">
+            <div className="h-7 w-2/3 animate-pulse rounded bg-brown/10" />
+            <div className="h-12 animate-pulse rounded bg-brown/10" />
+            <div className="h-12 animate-pulse rounded bg-brown/10" />
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+}
 
 export default function ProductsPage() {
   return (
@@ -28,7 +53,9 @@ export default function ProductsPage() {
           Giao hàng toàn quốc
         </div>
       </div>
-      <ProductCatalog />
+      <Suspense fallback={<ProductCatalogSkeleton />}>
+        <ProductCatalog />
+      </Suspense>
       <div className="mt-5 flex items-center justify-between gap-3 rounded-2xl border border-brown/10 bg-white px-4 py-3">
         <p className="text-xs leading-5 text-brown/60 sm:text-sm">
           Đã chọn xong? Tiếp tục nhập thông tin giao hàng.
