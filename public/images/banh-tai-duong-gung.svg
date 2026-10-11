@@ -1,0 +1,43 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 900" role="img" aria-labelledby="title desc">
+  <title id="title">Ảnh minh họa bánh tai có đường gừng</title>
+  <desc id="desc">Minh họa những chiếc bánh tai vàng giòn trên mẹt tre.</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" x2="1" y1="0" y2="1">
+      <stop offset="0" stop-color="#f6e7d1"/>
+      <stop offset="1" stop-color="#d9b88d"/>
+    </linearGradient>
+    <radialGradient id="cake" cx=".35" cy=".28" r=".78">
+      <stop offset="0" stop-color="#ffd987"/>
+      <stop offset=".58" stop-color="#d78635"/>
+      <stop offset="1" stop-color="#8c4422"/>
+    </radialGradient>
+    <pattern id="woven" width="28" height="28" patternUnits="userSpaceOnUse">
+      <path d="M0 7h28M0 21h28M7 0v28M21 0v28" stroke="#8e6038" stroke-opacity=".22" stroke-width="3"/>
+    </pattern>
+    <filter id="shadow" x="-30%" y="-30%" width="160%" height="180%">
+      <feGaussianBlur in="SourceAlpha" stdDeviation="18"/>
+      <feOffset dy="18"/>
+      <feComponentTransfer><feFuncA type="linear" slope=".32"/></feComponentTransfer>
+      <feMerge><feMergeNode/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+  </defs>
+  <rect width="1200" height="900" fill="url(#bg)"/>
+  <circle cx="1030" cy="145" r="210" fill="#fff6e5" opacity=".34"/>
+  <path d="M0 690Q280 560 580 682t620-4v222H0Z" fill="#c29260" opacity=".52"/>
+  <ellipse cx="603" cy="598" rx="484" ry="242" fill="#895830" opacity=".32"/>
+  <ellipse cx="600" cy="560" rx="485" ry="239" fill="#bb8958"/>
+  <ellipse cx="600" cy="548" rx="448" ry="209" fill="#d6a874"/>
+  <ellipse cx="600" cy="548" rx="426" ry="190" fill="url(#woven)" opacity=".7"/>
+  <g filter="url(#shadow)" stroke="#91491f" stroke-width="19" stroke-linejoin="round">
+    <path d="M205 540c-15-100 80-190 210-186 88 3 142 52 131 119-10 58-82 93-142 124-55 29-72 64-40 94 34 31 100 17 132-13" fill="none" stroke="url(#cake)" stroke-linecap="round" stroke-width="70"/>
+    <path d="M404 390c-7-101 100-174 219-154 85 15 124 78 102 137-21 54-99 77-164 98-59 19-82 50-56 85 28 37 95 35 133 11" fill="none" stroke="url(#cake)" stroke-linecap="round" stroke-width="68"/>
+    <path d="M649 399c12-98 125-157 239-122 81 25 110 91 80 147-29 50-109 63-177 75-61 11-88 39-68 77 21 42 87 49 129 30" fill="none" stroke="url(#cake)" stroke-linecap="round" stroke-width="67"/>
+    <path d="M790 586c7-88 105-139 206-108 72 23 100 82 74 132-25 45-96 57-156 68-54 10-78 35-60 69 19 37 77 44 115 27" fill="none" stroke="url(#cake)" stroke-linecap="round" stroke-width="60"/>
+  </g>
+  <g fill="#f7d27f" opacity=".85">
+    <circle cx="291" cy="430" r="9"/><circle cx="322" cy="455" r="7"/><circle cx="547" cy="337" r="8"/>
+    <circle cx="590" cy="358" r="6"/><circle cx="833" cy="340" r="8"/><circle cx="874" cy="372" r="7"/>
+    <circle cx="893" cy="564" r="7"/><circle cx="354" cy="633" r="8"/>
+  </g>
+  <path d="M80 800q70-54 151-4-83 12-119 80m978-112q-62-45-134-7 69 15 98 77" fill="none" stroke="#61744d" stroke-width="18" stroke-linecap="round" opacity=".68"/>
+</svg>

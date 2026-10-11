@@ -1,0 +1,25 @@
+import "server-only";
+import { createClient } from "@supabase/supabase-js";
+
+export type StoreProduct = {
+  id: string;
+  name: string;
+  slug: string;
+  description: string;
+  price: number;
+  unit: string;
+  image_url: string;
+};
+
+export function createPublicSupabaseClient() {
+  const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const anonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+  if (!url || !anonKey) return null;
+
+  return createClient(url, anonKey, {
+    auth: { autoRefreshToken: false, persistSession: false },
+    global: {
+      fetch: (input, init) => fetch(input, { ...init, cache: "no-store" }),
+    },
+  });
+}
