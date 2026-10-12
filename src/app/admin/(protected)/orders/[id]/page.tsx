@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { connection } from "next/server";
 import { Suspense } from "react";
 import { ArrowLeft, MapPin, Phone, UserRound } from "lucide-react";
 import { OrderStatusSelect } from "@/components/admin/order-status-select";
@@ -31,6 +32,7 @@ type OrderItem = {
 const money = (amount: number) => `${new Intl.NumberFormat("vi-VN").format(amount)}đ`;
 
 async function OrderDetail({ params }: { params: Promise<{ id: string }> }) {
+  await connection();
   const { id } = await params;
   if (!/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(id)) {
     notFound();

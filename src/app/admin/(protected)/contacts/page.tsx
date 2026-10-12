@@ -34,7 +34,7 @@ async function ContactsContent({ searchParams }: { searchParams: SearchParams })
     <div className="space-y-6">
       <div>
         <p className="text-xs font-bold uppercase tracking-[0.18em] text-terracotta">Hộp thư cửa hàng</p>
-        <h1 className="mt-2 font-serif text-3xl font-bold text-brown">Tin nhắn liên hệ</h1>
+        <h1 className="mt-2 font-bold text-3xl font-bold text-brown">Tin nhắn liên hệ</h1>
         <p className="mt-1 text-sm text-brown/60">Có {totalCount} lời nhắn từ khách hàng.</p>
       </div>
       {error ? (

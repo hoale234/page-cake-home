@@ -2,27 +2,23 @@ import Link from "next/link";
 import {
   AlertCircle,
   ArrowRight,
-  BadgeCheck,
-  CheckCircle2,
   ClipboardList,
-  Clock3,
-  PackageCheck,
+  ClipboardCheck,
   Wallet,
 } from "lucide-react";
+import { connection } from "next/server";
 import { requireAdmin } from "@/lib/auth/require-admin";
 
 const formatPrice = (amount: number) =>
   new Intl.NumberFormat("vi-VN").format(amount);
 
 const statusCards = [
-  { key: "new_count", title: "Đơn mới", icon: AlertCircle, color: "text-amber-700 bg-amber-50" },
-  { key: "confirmed_count", title: "Đã xác nhận", icon: BadgeCheck, color: "text-blue-700 bg-blue-50" },
-  { key: "shipping_count", title: "Đang giao", icon: PackageCheck, color: "text-violet-700 bg-violet-50" },
-  { key: "done_count", title: "Hoàn tất", icon: CheckCircle2, color: "text-green-700 bg-green-50" },
-  { key: "cancelled_count", title: "Đã hủy", icon: Clock3, color: "text-brown/60 bg-brown/5" },
+  { key: "new_count", title: "Mới", icon: AlertCircle, color: "text-amber-700 bg-amber-50" },
+  { key: "confirmed_count", title: "Lên đơn", icon: ClipboardCheck, color: "text-green-700 bg-green-50" },
 ] as const;
 
 export default async function AdminDashboardPage() {
+  await connection();
   const { supabase } = await requireAdmin();
   const { data, error } = await supabase.rpc("admin_dashboard_summary").single();
 
@@ -40,9 +36,6 @@ export default async function AdminDashboardPage() {
     revenue: number;
     new_count: number;
     confirmed_count: number;
-    shipping_count: number;
-    done_count: number;
-    cancelled_count: number;
   };
 
   return (
@@ -90,7 +83,7 @@ export default async function AdminDashboardPage() {
 
       <section>
         <h2 className="mb-4 font-serif text-xl font-bold text-brown">Đơn theo trạng thái</h2>
-        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-5">
+        <div className="grid gap-3 sm:grid-cols-2">
           {statusCards.map(({ key, title, icon: Icon, color }) => (
             <article key={key} className="rounded-2xl border border-brown/10 bg-white p-4 shadow-sm">
               <div className="flex items-center justify-between gap-3">

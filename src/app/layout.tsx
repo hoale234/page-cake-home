@@ -15,21 +15,31 @@ export const metadata: Metadata = {
   metadataBase: new URL(
     process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000",
   ),
-  title: siteConfig.name,
+  title: {
+    default: `${siteConfig.name} | Đặc sản bánh tai Huế`,
+    template: `%s | ${siteConfig.name}`,
+  },
   description: siteConfig.description,
   openGraph: {
     type: "website",
     locale: "vi_VN",
     siteName: siteConfig.name,
-    title: siteConfig.name,
+    title: `${siteConfig.name} | Đặc sản bánh tai Huế`,
     description: siteConfig.description,
-    images: [{ url: "/opengraph-image", width: 1200, height: 630, alt: siteConfig.name }],
+    images: [
+      {
+        url: "/images/banh-tai-que-nha.png",
+        width: 768,
+        height: 768,
+        alt: "Gia đình Bánh Tai Quê Nhà",
+      },
+    ],
   },
   twitter: {
     card: "summary_large_image",
-    title: siteConfig.name,
+    title: `${siteConfig.name} | Đặc sản bánh tai Huế`,
     description: siteConfig.description,
-    images: ["/opengraph-image"],
+    images: ["/images/banh-tai-que-nha.png"],
   },
 };
 
@@ -39,6 +49,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       lang="vi"
       data-scroll-behavior="smooth"
       className={`${beVietnamPro.variable} h-full antialiased`}
+      suppressHydrationWarning
     >
       <body className="min-h-full flex flex-col">
         <AppProviders>{children}</AppProviders>

@@ -1,9 +1,10 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState, type ReactNode } from "react";
-import { Home, MessageCircle, Package, Phone, ShoppingBasket } from "lucide-react";
+import { ClipboardList, Home, MessageCircle, Package, Phone, ShoppingBasket } from "lucide-react";
 import { siteConfig } from "@/config/site";
 import { useCartStore } from "@/lib/store/cart";
 
@@ -11,6 +12,7 @@ const tabs = [
   { href: "/", label: "Trang chủ", icon: Home },
   { href: "/san-pham", label: "Sản phẩm", icon: Package },
   { href: "/dat-hang", label: "Đặt hàng", icon: ShoppingBasket, cart: true },
+  { href: "/tra-cuu-don", label: "Lịch sử đơn", icon: ClipboardList },
   { href: "/lien-he", label: "Liên hệ", icon: MessageCircle },
 ];
 
@@ -25,8 +27,14 @@ function StorefrontNavigation() {
       <header className="sticky top-0 z-40 border-b border-brown/10 bg-cream/95 backdrop-blur">
         <div className="mx-auto flex h-16 max-w-5xl items-center justify-between gap-3 px-4 sm:px-6">
           <Link href="/" className="flex min-w-0 items-center gap-2.5">
-            <span className="flex size-10 shrink-0 items-center justify-center rounded-full bg-terracotta font-serif text-xl font-bold text-cream">
-              T
+            <span className="relative size-10 shrink-0 overflow-hidden rounded-full border border-brown/10 bg-white">
+              <Image
+                src="/images/banh-tai-que-nha.png"
+                alt=""
+                fill
+                sizes="40px"
+                className="object-cover"
+              />
             </span>
             <span className="truncate font-serif text-base font-bold text-brown sm:text-lg">
               {siteConfig.name}
@@ -66,7 +74,7 @@ function StorefrontNavigation() {
         aria-label="Điều hướng chính"
         className="fixed inset-x-0 bottom-0 z-50 border-t border-brown/10 bg-white/95 px-1 pb-[env(safe-area-inset-bottom)] shadow-[0_-8px_28px_rgba(80,53,42,.08)] backdrop-blur md:hidden"
       >
-        <div className="mx-auto grid h-[4.25rem] max-w-lg grid-cols-4">
+        <div className="mx-auto grid h-[4.25rem] max-w-lg grid-cols-5">
           {tabs.map(({ href, label, icon: Icon, cart }) => {
             const active = pathname === href;
             return (

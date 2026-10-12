@@ -69,8 +69,8 @@ export async function POST(request: NextRequest) {
       (requestedItems.get(item.slug) ?? 0) + item.quantity,
     );
   }
-  if ([...requestedItems.values()].some((quantity) => quantity > 99)) {
-    return NextResponse.json({ error: "Số lượng mỗi sản phẩm tối đa là 99." }, { status: 400 });
+  if ([...requestedItems.values()].some((quantity) => quantity > 10)) {
+    return NextResponse.json({ error: "Số lượng mỗi sản phẩm tối đa là 10." }, { status: 400 });
   }
 
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
@@ -115,7 +115,11 @@ export async function POST(request: NextRequest) {
   const order = {
     customer_name: parsed.data.customer_name,
     phone: parsed.data.phone.replace(/[\s().-]/g, ""),
-    address: parsed.data.address,
+    address: [
+      parsed.data.house_number,
+      parsed.data.ward,
+      parsed.data.province,
+    ].join(", "),
     note: parsed.data.note,
     payment_method: parsed.data.payment_method,
     subtotal,

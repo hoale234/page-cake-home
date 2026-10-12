@@ -1,8 +1,9 @@
 import Link from "next/link";
+import { connection } from "next/server";
 import { Suspense } from "react";
-import { Download, Search } from "lucide-react";
+import { Download } from "lucide-react";
 import { requireAdmin } from "@/lib/auth/require-admin";
-import { orderStatuses, orderStatusLabels, type OrderStatus } from "@/lib/admin/orders";
+import { orderStatuses, type OrderStatus } from "@/lib/admin/orders";
 import { OrderStatusSelect } from "@/components/admin/order-status-select";
 
 const pageSize = 20;
@@ -10,8 +11,6 @@ const pageSize = 20;
 type SearchParams = Promise<{
   page?: string;
   status?: string;
-  search?: string;
-  phone?: string;
 }>;
 
 type OrderRow = {
@@ -41,12 +40,11 @@ function formatDate(value: string) {
 }
 
 async function OrdersContent({ searchParams }: { searchParams: SearchParams }) {
+  await connection();
   const params = await searchParams;
   const status = orderStatuses.includes(params.status as OrderStatus)
     ? (params.status as OrderStatus)
     : "";
-  const search = (params.search ?? "").replace(/[^0-9A-Za-z-]/g, "").trim().slice(0, 50);
-  const phone = (params.phone ?? "").replace(/\D/g, "").slice(0, 10);
   const requestedPage = /^\d+$/.test(params.page ?? "") ? Number(params.page) : 1;
   const page = Math.max(1, Math.min(requestedPage, 100_000));
   const { supabase } = await requireAdmin();
@@ -57,12 +55,25 @@ async function OrdersContent({ searchParams }: { searchParams: SearchParams }) {
     .order("created_at", { ascending: false });
 
   if (status) query = query.eq("status", status);
-  if (search) query = query.ilike("order_code", `%${search}%`);
-  if (phone) query = query.ilike("phone", `%${phone}%`);
 
-  const { data, count, error } = await query.range((page - 1) * pageSize, page * pageSize - 1);
+  const [ordersResult, allCountResult, newCountResult, confirmedCountResult] = await Promise.all([
+    query.range((page - 1) * pageSize, page * pageSize - 1),
+    supabase.from("orders").select("id", { count: "exact", head: true }),
+    supabase.from("orders").select("id", { count: "exact", head: true }).eq("status", "new"),
+    supabase.from("orders").select("id", { count: "exact", head: true }).eq("status", "confirmed"),
+  ]);
+  const { data, count, error } = ordersResult;
   if (error) {
     console.error("Không thể tải danh sách đơn hàng:", error);
+  }
+  const statusCountsError = Boolean(
+    allCountResult.error || newCountResult.error || confirmedCountResult.error,
+  );
+  if (statusCountsError) {
+    console.error(
+      "Không thể tải số lượng đơn theo trạng thái:",
+      allCountResult.error ?? newCountResult.error ?? confirmedCountResult.error,
+    );
   }
 
   const orders = (data ?? []) as OrderRow[];
@@ -84,11 +95,14 @@ async function OrdersContent({ searchParams }: { searchParams: SearchParams }) {
     }
   }
   const totalCount = count ?? 0;
+  const statusCounts = {
+    all: allCountResult.count ?? 0,
+    new: newCountResult.count ?? 0,
+    confirmed: confirmedCountResult.count ?? 0,
+  };
   const totalPages = Math.max(1, Math.ceil(totalCount / pageSize));
   const baseQuery = new URLSearchParams();
   if (status) baseQuery.set("status", status);
-  if (search) baseQuery.set("search", search);
-  if (phone) baseQuery.set("phone", phone);
   const pageHref = (pageNumber: number) => {
     const nextQuery = new URLSearchParams(baseQuery);
     nextQuery.set("page", String(pageNumber));
@@ -111,53 +125,46 @@ async function OrdersContent({ searchParams }: { searchParams: SearchParams }) {
         </a>
       </div>
 
-      <form className="grid gap-3 rounded-2xl border border-brown/10 bg-white p-4 shadow-sm sm:grid-cols-2 lg:grid-cols-[minmax(170px,1fr)_minmax(170px,1fr)_180px_auto] lg:items-end">
-        <label className="text-xs font-bold text-brown/65">
-          Mã đơn
-          <span className="relative mt-1.5 block">
-            <Search className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-brown/40" />
-            <input
-              type="search"
-              name="search"
-              defaultValue={search}
-              placeholder="BT-..."
-              className="h-10 w-full rounded-xl border border-brown/15 bg-[#fffefa] pl-9 pr-3 text-sm font-normal outline-none focus:border-terracotta"
-            />
-          </span>
-        </label>
-        <label className="text-xs font-bold text-brown/65">
-          Số điện thoại
-          <input
-            type="search"
-            inputMode="numeric"
-            name="phone"
-            defaultValue={phone}
-            placeholder="Tìm theo SĐT"
-            className="mt-1.5 h-10 w-full rounded-xl border border-brown/15 bg-[#fffefa] px-3 text-sm font-normal outline-none focus:border-terracotta"
-          />
-        </label>
-        <label className="text-xs font-bold text-brown/65">
-          Trạng thái
-          <select
-            name="status"
-            defaultValue={status}
-            className="mt-1.5 h-10 w-full rounded-xl border border-brown/15 bg-[#fffefa] px-3 text-sm font-semibold text-brown outline-none focus:border-terracotta"
-          >
-            <option value="">Tất cả trạng thái</option>
-            {orderStatuses.map((statusOption) => (
-              <option key={statusOption} value={statusOption}>
-                {orderStatusLabels[statusOption]}
-              </option>
-            ))}
-          </select>
-        </label>
-        <button
-          type="submit"
-          className="h-10 rounded-xl bg-brown px-5 text-sm font-bold text-white transition hover:bg-terracotta"
-        >
-          Lọc đơn hàng
-        </button>
-      </form>
+      {statusCountsError ? (
+        <p role="status" className="rounded-xl bg-amber-50 px-4 py-2 text-xs text-amber-900">
+          Chưa tải được số lượng đơn theo trạng thái; các tab trạng thái vẫn hoạt động.
+        </p>
+      ) : null}
+      <nav
+        aria-label="Lọc đơn hàng theo trạng thái"
+        className="-mx-1 flex gap-2 overflow-x-auto px-1 pb-1"
+      >
+        {([
+          { key: "", label: "Tất cả", count: statusCounts.all },
+          { key: "new", label: "Mới", count: statusCounts.new },
+          { key: "confirmed", label: "Lên đơn", count: statusCounts.confirmed },
+        ] as const).map((filter) => {
+          const isActive = status === filter.key;
+          const filterQuery = new URLSearchParams();
+          if (filter.key) filterQuery.set("status", filter.key);
+          const href = `/admin/orders${filterQuery.size ? `?${filterQuery.toString()}` : ""}`;
+
+          return (
+            <Link
+              key={filter.key || "all"}
+              href={href}
+              aria-current={isActive ? "page" : undefined}
+              className={`inline-flex shrink-0 items-center gap-2 rounded-xl border px-3.5 py-2 text-sm font-semibold transition ${
+                isActive
+                  ? "border-brown bg-white text-brown shadow-sm"
+                  : "border-transparent bg-white/60 text-brown/65 hover:border-brown/10 hover:bg-white"
+              }`}
+            >
+              {filter.label}
+              <span className={`rounded-full px-1.5 py-0.5 text-[10px] leading-none ${
+                isActive ? "bg-terracotta/10 text-terracotta" : "bg-brown/5 text-brown/50"
+              }`}>
+                {filter.count}
+              </span>
+            </Link>
+          );
+        })}
+      </nav>
 
       <section className="overflow-hidden rounded-2xl border border-brown/10 bg-white shadow-sm">
         {customerCountsError ? (
@@ -171,8 +178,8 @@ async function OrdersContent({ searchParams }: { searchParams: SearchParams }) {
           </div>
         ) : orders.length === 0 ? (
           <div className="px-5 py-16 text-center">
-            <p className="font-serif text-xl font-bold text-brown">Chưa tìm thấy đơn hàng</p>
-            <p className="mt-2 text-sm text-brown/55">Thử thay đổi điều kiện lọc hoặc kiểm tra lại sau.</p>
+            <p className="font-serif text-xl font-bold text-brown">Chưa có đơn hàng</p>
+            <p className="mt-2 text-sm text-brown/55">Đơn hàng mới sẽ xuất hiện tại đây.</p>
           </div>
         ) : (
           <div className="overflow-x-auto">
