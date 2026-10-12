@@ -1,5 +1,6 @@
 import type { ReactNode } from "react";
 import { Suspense } from "react";
+import { connection } from "next/server";
 import { AdminShell } from "@/components/admin/admin-shell";
 import { requireAdmin } from "@/lib/auth/require-admin";
 
@@ -8,6 +9,7 @@ async function ProtectedAdminContent({
 }: {
   children: ReactNode;
 }) {
+  await connection();
   await requireAdmin();
   return <AdminShell>{children}</AdminShell>;
 }

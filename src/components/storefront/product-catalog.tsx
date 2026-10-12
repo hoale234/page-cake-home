@@ -17,7 +17,7 @@ const previewProducts: StoreProduct[] = [
     id: "preview-banh-tai-khong-duong",
     name: "Bánh tai không đường",
     slug: "banh-tai-khong-duong",
-    description: "Bánh tai truyền thống vị nguyên bản, không thêm đường.",
+    description: "Bánh tai không đường, thơm béo.",
     price: 50000,
     unit: "500g",
     image_url: "/images/banh-tai-san-pham-tam.png",
@@ -65,13 +65,13 @@ export async function ProductCatalog() {
 
   return (
     <>
-      <div className="grid gap-6 md:grid-cols-2">
+      <div className="grid grid-cols-2 gap-3 sm:gap-6">
         {products.map((product, index) => (
           <article
             key={product.id}
-            className="group overflow-hidden rounded-[1.75rem] border border-brown/5 bg-white shadow-sm transition hover:-translate-y-1 hover:shadow-xl hover:shadow-brown/10"
+            className="group flex h-full flex-col overflow-hidden rounded-[1.75rem] border border-brown/5 bg-white shadow-sm transition hover:-translate-y-1 hover:shadow-xl hover:shadow-brown/10"
           >
-            <div className="relative aspect-[16/9] overflow-hidden bg-[#ead5b8]">
+            <div className="relative aspect-[4/3] overflow-hidden bg-[#ead5b8] sm:aspect-[16/9]">
               <Image
                 src={product.image_url}
                 alt={`Ảnh ${product.name}`}
@@ -80,28 +80,28 @@ export async function ProductCatalog() {
                 sizes="(max-width: 768px) 100vw, 50vw"
                 className="object-cover transition duration-500 group-hover:scale-[1.03]"
               />
-              <span className="absolute left-4 top-4 rounded-full bg-white/90 px-3 py-1.5 text-xs font-bold text-terracotta shadow-sm">
+              <span className="absolute left-2 top-2 rounded-full bg-white/90 px-2 py-1 text-[9px] font-bold text-terracotta shadow-sm sm:left-4 sm:top-4 sm:px-3 sm:py-1.5 sm:text-xs">
                 {index === 0 ? "Vị được yêu thích" : "Vị truyền thống"}
               </span>
               {index === 0 ? (
-                <span className="absolute bottom-4 right-4 flex size-10 items-center justify-center rounded-full bg-gold text-brown shadow-md">
-                  <Star className="size-5 fill-current" />
+                <span className="absolute bottom-2 right-2 flex size-8 items-center justify-center rounded-full bg-gold text-brown shadow-md sm:bottom-4 sm:right-4 sm:size-10">
+                  <Star className="size-4 fill-current sm:size-5" />
                 </span>
               ) : null}
             </div>
-            <div className="p-5 sm:p-7">
-              <h3 className="font-serif text-xl font-bold text-brown sm:text-2xl">
+            <div className="flex flex-1 flex-col p-3 sm:p-7">
+              <h3 className="line-clamp-2 min-h-10 font-serif text-base font-bold leading-5 text-brown sm:min-h-16 sm:text-2xl sm:leading-8">
                 {product.name}
               </h3>
-              <p className="mt-2 min-h-12 text-sm leading-6 text-brown/65">
+              <p className="mt-2 line-clamp-3 h-[3.75rem] text-xs leading-5 text-brown/65 sm:h-[4.5rem] sm:text-sm sm:leading-6">
                 {product.description}
               </p>
-              <div className="mt-5 flex flex-wrap items-end justify-between gap-4 border-t border-brown/10 pt-5">
+              <div className="mt-auto flex flex-col items-start gap-3 border-t border-brown/10 pt-3 sm:mt-auto sm:flex-row sm:flex-wrap sm:items-end sm:justify-between sm:gap-4 sm:pt-5">
                 <div>
-                  <p className="text-xs font-medium text-brown/55">Giá bán</p>
-                  <p className="mt-1 text-lg font-extrabold text-terracotta">
+                  <p className="text-[10px] font-medium text-brown/55 sm:text-xs">Giá bán</p>
+                  <p className="mt-1 text-base font-extrabold text-terracotta sm:text-lg">
                     {formatPrice(product.price)}đ{" "}
-                    <span className="text-sm font-semibold text-brown/60">/ {product.unit}</span>
+                    <span className="text-[11px] font-semibold text-brown/60 sm:text-sm">/ {product.unit}</span>
                   </p>
                 </div>
                 <ProductActions
@@ -117,11 +117,6 @@ export async function ProductCatalog() {
           </article>
         ))}
       </div>
-      <p className="mt-6 text-center text-xs text-brown/55">
-        {isPreview
-          ? "* Đang hiển thị sản phẩm xem trước. Cấu hình Supabase để tải dữ liệu sản phẩm và nhận đơn hàng."
-          : "* Ảnh sản phẩm hiện là ảnh tạm, shop có thể thay bằng ảnh thật trong trang quản trị."}
-      </p>
     </>
   );
 }

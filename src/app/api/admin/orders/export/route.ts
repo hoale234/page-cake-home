@@ -25,7 +25,7 @@ export async function GET(request: NextRequest) {
   const search = (params.get("search") ?? "").replace(/[^0-9A-Za-z-]/g, "").trim().slice(0, 50);
   const phone = (params.get("phone") ?? "").replace(/\D/g, "").slice(0, 10);
   const validStatus =
-    status && orderStatuses.includes(status as OrderStatus) ? status : "";
+    status && orderStatuses.includes(status as OrderStatus) ? (status as OrderStatus) : "";
 
   const rows: {
     order_code: string;

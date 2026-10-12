@@ -6,7 +6,7 @@ import { ProductCatalog } from "@/components/storefront/product-catalog";
 
 export const metadata: Metadata = {
   title: "Sản phẩm bánh tai",
-  description: "Chọn bánh tai có đường gừng hoặc không đường, 50.000đ / 500g.",
+  description: "Chọn bánh tai có đường gừng hoặc không đường, 60.000đ / 500g.",
 };
 
 function ProductCatalogSkeleton() {
@@ -14,16 +14,16 @@ function ProductCatalogSkeleton() {
     <div
       aria-label="Đang tải danh sách sản phẩm"
       aria-busy="true"
-      className="grid gap-6 md:grid-cols-2"
+      className="grid grid-cols-2 gap-3 sm:gap-6"
     >
       {[0, 1].map((item) => (
         <div
           key={item}
           className="overflow-hidden rounded-[1.75rem] border border-brown/5 bg-white shadow-sm"
         >
-          <div className="aspect-[16/9] animate-pulse bg-brown/10" />
-          <div className="space-y-3 p-5 sm:p-7">
-            <div className="h-7 w-2/3 animate-pulse rounded bg-brown/10" />
+          <div className="aspect-[4/3] animate-pulse bg-brown/10 sm:aspect-[16/9]" />
+          <div className="space-y-3 p-3 sm:p-7">
+            <div className="h-6 w-2/3 animate-pulse rounded bg-brown/10 sm:h-7" />
             <div className="h-12 animate-pulse rounded bg-brown/10" />
             <div className="h-12 animate-pulse rounded bg-brown/10" />
           </div>
@@ -44,9 +44,6 @@ export default function ProductsPage() {
           <h1 className="mt-1 font-serif text-2xl font-bold text-brown sm:text-3xl">
             Chọn vị bánh bạn thương
           </h1>
-          <p className="mt-1 text-xs text-brown/60 sm:text-sm">
-            50.000đ / 500g · Ship đồng giá 15.000đ
-          </p>
         </div>
         <div className="hidden items-center gap-1.5 rounded-full bg-white px-3 py-2 text-xs font-semibold text-brown/65 sm:inline-flex">
           <Truck className="size-4 text-terracotta" />

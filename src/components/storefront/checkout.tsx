@@ -15,6 +15,7 @@ import {
 import { toast } from "sonner";
 import { siteConfig } from "@/config/site";
 import { useCartStore } from "@/lib/store/cart";
+import { lastOrderPhoneStorageKey } from "@/lib/storefront/order-lookup";
 import {
   checkoutFormSchema,
   savedCustomerInfoSchema,
@@ -58,7 +59,6 @@ function FieldError({ message }: { message?: string }) {
 type OrderSuccess = {
   orderCode: string;
   total: number;
-  paymentMethod: CheckoutValues["payment_method"];
 };
 
 export function Checkout() {
@@ -104,7 +104,9 @@ export function Checkout() {
     defaultValues: {
       customer_name: "",
       phone: "",
-      address: "",
+      house_number: "",
+      ward: "",
+      province: "",
       note: "",
       payment_method: "cod",
       website: "",
@@ -154,10 +156,19 @@ export function Checkout() {
         return;
       }
 
+      try {
+        window.localStorage.setItem(lastOrderPhoneStorageKey, values.phone);
+      } catch (error) {
+        console.error("Không thể lưu số điện thoại để tra cứu đơn hàng:", error);
+        toast.warning("Đơn hàng đã gửi nhưng không thể lưu số điện thoại tra cứu trên thiết bị.");
+      }
+
       const nextSavedInfo = {
         phone: values.phone,
         customer_name: values.customer_name,
-        address: values.address,
+        house_number: values.house_number,
+        ward: values.ward,
+        province: values.province,
       };
       if (saveForLater) {
         try {
@@ -181,7 +192,9 @@ export function Checkout() {
       reset({
         customer_name: "",
         phone: "",
-        address: "",
+        house_number: "",
+        ward: "",
+        province: "",
         note: "",
         payment_method: "cod",
         website: "",
@@ -189,7 +202,6 @@ export function Checkout() {
       setSuccess({
         orderCode: result.orderCode,
         total: result.total,
-        paymentMethod: values.payment_method,
       });
     } catch (error) {
       console.error("Không thể gửi đơn hàng:", error);
@@ -205,7 +217,9 @@ export function Checkout() {
       notifySavedInfoChanged();
       setValue("phone", "");
       setValue("customer_name", "");
-      setValue("address", "");
+      setValue("house_number", "");
+      setValue("ward", "");
+      setValue("province", "");
       setSaveForLater(true);
       toast.success("Đã xóa thông tin đã lưu trên thiết bị này.");
     } catch (error) {
@@ -215,7 +229,6 @@ export function Checkout() {
   }
 
   if (success) {
-    const hasBankDetails = Object.values(siteConfig.bankTransfer).every(Boolean);
     const zaloHref = siteConfig.zaloUrl || "/lien-he";
     return (
       <div className="mx-auto w-full max-w-lg space-y-5">
@@ -245,55 +258,17 @@ export function Checkout() {
               <strong className="text-brown">{formatPrice(success.total)}đ</strong>
             </div>
           </div>
-
-          {success.paymentMethod === "bank_transfer" ? (
-            <div className="mt-4 rounded-2xl border border-terracotta/15 bg-terracotta/5 p-4 text-left">
-              <h3 className="font-bold text-brown">Hướng dẫn chuyển khoản</h3>
-              {hasBankDetails ? (
-                <>
-                  <dl className="mt-3 space-y-2 text-sm">
-                    <div className="flex justify-between gap-3">
-                      <dt className="text-brown/60">Ngân hàng</dt>
-                      <dd className="text-right font-semibold">{siteConfig.bankTransfer.bankName}</dd>
-                    </div>
-                    <div className="flex justify-between gap-3">
-                      <dt className="text-brown/60">Chủ tài khoản</dt>
-                      <dd className="text-right font-semibold">{siteConfig.bankTransfer.accountName}</dd>
-                    </div>
-                    <div className="flex justify-between gap-3">
-                      <dt className="text-brown/60">Số tài khoản</dt>
-                      <dd className="text-right font-semibold">{siteConfig.bankTransfer.accountNumber}</dd>
-                    </div>
-                    <div className="flex justify-between gap-3 border-t border-brown/10 pt-2">
-                      <dt className="text-brown/60">Nội dung</dt>
-                      <dd className="text-right font-extrabold text-terracotta">{success.orderCode}</dd>
-                    </div>
-                    <div className="flex justify-between gap-3">
-                      <dt className="text-brown/60">Số tiền</dt>
-                      <dd className="text-right font-extrabold">{formatPrice(success.total)}đ</dd>
-                    </div>
-                  </dl>
-                  <p className="mt-3 text-xs leading-5 text-brown/60">
-                    Shop sẽ xác nhận đơn sau khi nhận được thanh toán.
-                  </p>
-                </>
-              ) : (
-                <p className="mt-2 text-sm leading-6 text-brown/65">
-                  Shop sẽ gửi thông tin tài khoản để bạn chuyển khoản khi xác nhận đơn. Vui lòng nhắn Zalo cho shop nếu cần hỗ trợ ngay.
-                </p>
-              )}
-            </div>
-          ) : null}
+          <p className="mt-4 text-sm text-brown/60">
+            Dùng số điện thoại đặt hàng để xem tất cả đơn hàng của bạn.
+          </p>
 
           <div className="mt-5 grid gap-2 sm:grid-cols-2">
-            <a
-              href={zaloHref}
-              target={siteConfig.zaloUrl ? "_blank" : undefined}
-              rel={siteConfig.zaloUrl ? "noreferrer" : undefined}
-              className="inline-flex h-11 items-center justify-center gap-2 rounded-full bg-[#1778f2] px-4 text-sm font-bold text-white transition hover:bg-[#1168d6]"
+            <Link
+              href="/tra-cuu-don"
+              className="inline-flex h-11 items-center justify-center gap-2 rounded-full bg-brown px-4 text-sm font-bold text-white transition hover:bg-terracotta"
             >
-              Nhắn Zalo xác nhận
-            </a>
+              Lịch sử đơn hàng
+            </Link>
             <Link
               href="/san-pham"
               className="inline-flex h-11 items-center justify-center gap-2 rounded-full border border-brown/15 px-4 text-sm font-bold text-brown transition hover:border-terracotta hover:text-terracotta"
@@ -354,7 +329,7 @@ export function Checkout() {
                       type="button"
                       aria-label={`Tăng ${item.name}`}
                       onClick={() => setQuantity(item.slug, item.quantity + 1)}
-                      disabled={item.quantity >= 99}
+                      disabled={item.quantity >= 10}
                       className="flex size-8 items-center justify-center rounded-full border border-brown/15 text-brown hover:bg-cream disabled:opacity-40"
                     >
                       <Plus className="size-3.5" />
@@ -380,7 +355,7 @@ export function Checkout() {
         </section>
 
         <section className="rounded-3xl border border-brown/10 bg-white p-4 shadow-sm sm:p-5">
-          <h2 className="font-serif text-lg font-bold">Thông tin nhận hàng</h2>
+          <h2 className="font-serif text-lg font-bold">Dạ cho em xin thông tin giao hàng nhé</h2>
           <p className="mt-0.5 text-xs text-brown/55">Các ô có dấu * là bắt buộc.</p>
           {savedInfo ? (
             <div className="mt-3 flex flex-wrap items-center justify-between gap-2 rounded-xl bg-green-50 px-3 py-2 text-xs text-green-900">
@@ -388,7 +363,7 @@ export function Checkout() {
               <div className="flex items-center gap-3">
                 <button
                   type="button"
-                  onClick={() => setFocus("phone")}
+                  onClick={() => setFocus("house_number")}
                   className="font-bold underline underline-offset-2"
                 >
                   Sửa
@@ -433,18 +408,45 @@ export function Checkout() {
               />
               <FieldError message={errors.customer_name?.message} />
             </label>
-            <label className="block text-xs font-bold text-brown">
-              Địa chỉ nhận hàng *
-              <textarea
-                autoComplete="street-address"
-                rows={2}
-                placeholder="Số nhà, đường, phường/xã, tỉnh/thành phố"
-                aria-invalid={Boolean(errors.address)}
-                {...register("address")}
-                className="mt-1.5 w-full resize-y rounded-xl border border-brown/15 bg-[#fffefa] px-3.5 py-2.5 text-sm font-normal outline-none transition placeholder:text-brown/35 focus:border-terracotta focus:ring-2 focus:ring-terracotta/10"
-              />
-              <FieldError message={errors.address?.message} />
-            </label>
+            <fieldset className="space-y-2">
+              <legend className="text-xs font-bold text-brown">Địa chỉ nhận hàng *</legend>
+              <p className="text-xs font-normal text-brown/55">
+                Vui lòng điền địa chỉ mới để shop giao hàng chính xác.
+              </p>
+              <label className="block text-xs font-bold text-brown">
+                Số nhà, tên đường *
+                <input
+                  autoComplete="address-line1"
+                  placeholder="Ví dụ: 12 Nguyễn Huệ"
+                  aria-invalid={Boolean(errors.house_number)}
+                  {...register("house_number")}
+                  className="mt-1.5 h-11 w-full rounded-xl border border-brown/15 bg-[#fffefa] px-3.5 text-sm font-normal outline-none transition placeholder:text-brown/35 focus:border-terracotta focus:ring-2 focus:ring-terracotta/10"
+                />
+                <FieldError message={errors.house_number?.message} />
+              </label>
+              <label className="block text-xs font-bold text-brown">
+                Xã/phường *
+                <input
+                  autoComplete="address-level3"
+                  placeholder="Nhập xã/phường"
+                  aria-invalid={Boolean(errors.ward)}
+                  {...register("ward")}
+                  className="mt-1.5 h-11 w-full rounded-xl border border-brown/15 bg-[#fffefa] px-3.5 text-sm font-normal outline-none transition placeholder:text-brown/35 focus:border-terracotta focus:ring-2 focus:ring-terracotta/10"
+                />
+                <FieldError message={errors.ward?.message} />
+              </label>
+              <label className="block text-xs font-bold text-brown">
+                Tỉnh/thành phố *
+                <input
+                  autoComplete="address-level1"
+                  placeholder="Nhập tỉnh/thành phố"
+                  aria-invalid={Boolean(errors.province)}
+                  {...register("province")}
+                  className="mt-1.5 h-11 w-full rounded-xl border border-brown/15 bg-[#fffefa] px-3.5 text-sm font-normal outline-none transition placeholder:text-brown/35 focus:border-terracotta focus:ring-2 focus:ring-terracotta/10"
+                />
+                <FieldError message={errors.province?.message} />
+              </label>
+            </fieldset>
             <label className="block text-xs font-bold text-brown">
               Ghi chú <span className="font-normal text-brown/45">(không bắt buộc)</span>
               <textarea
@@ -470,14 +472,10 @@ export function Checkout() {
               <legend className="mb-1.5 text-xs font-bold text-brown">
                 Phương thức thanh toán
               </legend>
-              <div className="grid grid-cols-2 gap-2">
+              <div className="grid gap-2">
                 <label className="flex cursor-pointer items-center gap-2 rounded-xl border border-brown/15 p-2.5 text-xs font-semibold has-[:checked]:border-terracotta has-[:checked]:bg-terracotta/5">
                   <input type="radio" value="cod" {...register("payment_method")} className="accent-terracotta" />
-                  COD
-                </label>
-                <label className="flex cursor-pointer items-center gap-2 rounded-xl border border-brown/15 p-2.5 text-xs font-semibold has-[:checked]:border-terracotta has-[:checked]:bg-terracotta/5">
-                  <input type="radio" value="bank_transfer" {...register("payment_method")} className="accent-terracotta" />
-                  Chuyển khoản
+                  Thanh toán khi nhận hàng (COD)
                 </label>
               </div>
             </fieldset>
