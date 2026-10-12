@@ -21,16 +21,15 @@ export default function HomePage() {
           Đặc sản bánh tai Huế
         </p>
         <h1 className="mt-3 font-serif text-3xl font-bold leading-tight text-brown sm:text-4xl">
-          Một chút vị quê, thương nhớ cả nhà.
+          Bánh tai thủ công
         </h1>
         <p className="mt-3 text-sm leading-6 text-brown/65 sm:text-base">
-          Bánh tai thủ công thơm giòn, gói ghém hương vị thân quen quê nhà.
+          Giòn rụm, thơm vị gừng
         </p>
         <ul className="mt-5 flex flex-wrap justify-center gap-2 md:justify-start">
           {[
             { icon: Truck, text: "Ship đồng giá 15k" },
-            { icon: Check, text: "50k / 500g" },
-            { icon: Check, text: "Làm thủ công" },
+            { icon: Check, text: "60k / 500g" },
           ].map(({ icon: Icon, text }) => (
             <li
               key={text}

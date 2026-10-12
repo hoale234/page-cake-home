@@ -150,7 +150,7 @@ values
     'Bánh tai có đường',
     'banh-tai-duong-gung',
     'Bánh tai truyền thống thơm vị gừng, ngọt dịu vừa ăn.',
-    50000,
+    60000,
     '500g',
     '/images/banh-tai-san-pham-tam.png',
     1
@@ -158,8 +158,8 @@ values
   (
     'Bánh tai không đường',
     'banh-tai-khong-duong',
-    'Bánh tai truyền thống vị nguyên bản, không thêm đường.',
-    50000,
+    'Bánh tai không đường, thơm béo.',
+    60000,
     '500g',
     '/images/banh-tai-san-pham-tam.png',
     2

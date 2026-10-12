@@ -31,13 +31,13 @@ export const useCartStore = create<CartState>()(
             return {
               items: state.items.map((item) =>
                 item.slug === product.slug
-                  ? { ...item, quantity: Math.min(item.quantity + quantity, 99) }
+                  ? { ...item, quantity: Math.min(item.quantity + quantity, 10) }
                   : item,
               ),
             };
           }
           return {
-            items: [...state.items, { ...product, quantity: Math.min(quantity, 99) }],
+            items: [...state.items, { ...product, quantity: Math.min(quantity, 10) }],
           };
         }),
       setQuantity: (slug, quantity) =>
@@ -47,7 +47,7 @@ export const useCartStore = create<CartState>()(
               ? state.items.filter((item) => item.slug !== slug)
               : state.items.map((item) =>
                   item.slug === slug
-                    ? { ...item, quantity: Math.min(quantity, 99) }
+                    ? { ...item, quantity: Math.min(quantity, 10) }
                     : item,
                 ),
         })),
