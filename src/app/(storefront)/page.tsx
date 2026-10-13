@@ -5,8 +5,8 @@ import { siteConfig } from "@/config/site";
 
 export default function HomePage() {
   return (
-    <section className="mx-auto grid w-full max-w-5xl flex-1 items-start px-4 py-8 pb-[70px] sm:px-6 md:grid-cols-2 md:items-center md:gap-8 md:py-12">
-      <div className="mt-8 flex items-center justify-center md:mb-0">
+    <section className="mx-auto grid w-full max-w-5xl flex-1 items-start p-0 px-4 pb-[70px] sm:px-6 md:grid-cols-2 md:items-center md:gap-8 md:py-12">
+      <div className="mt-8 flex items-center justify-center md:mt-0 md:mb-0">
         <div className="relative mx-auto aspect-[4/3] w-full max-w-xl overflow-hidden rounded-[2rem] border-8 border-white bg-[#ead5b8] shadow-xl shadow-brown/10">
           <Image
             src="/images/banh-tai-duong-gung1.png"
