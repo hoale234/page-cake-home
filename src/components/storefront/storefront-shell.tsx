@@ -5,6 +5,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import type { ReactNode } from "react";
 import { ClipboardList, Home, MessageCircle, Package, ShoppingBasket } from "lucide-react";
+import { siteConfig } from "@/config/site";
 import { useCartStore } from "@/lib/store/cart";
 
 const tabs = [
