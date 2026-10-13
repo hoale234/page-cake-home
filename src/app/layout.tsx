@@ -28,10 +28,10 @@ export const metadata: Metadata = {
     description: siteConfig.description,
     images: [
       {
-        url: "/images/banh-tai-que-nha.png",
+        url: "/images/banh-tai-que-nha-sharing.jpg",
         width: 768,
         height: 768,
-        alt: "Gia đình Bánh Tai Quê Nhà",
+        alt: "Gia đình làm bánh tai tại nhà",
       },
     ],
   },
@@ -39,7 +39,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: `${siteConfig.name} | Đặc sản bánh tai Huế`,
     description: siteConfig.description,
-    images: ["/images/banh-tai-que-nha.png"],
+    images: ["/images/banh-tai-que-nha-sharing.jpg"],
   },
 };
 
