@@ -77,14 +77,14 @@ export async function POST(request: NextRequest) {
 
   const itemsByOrderId = new Map<
     string,
-    Array<{ order_id: string; product_name: string; unit_price: number; quantity: number }>
+    Array<{ order_id: string; product_name: string; unit_price: number; unit: string; quantity: number }>
   >();
   const itemBatchSize = 40;
   for (let start = 0; start < orders.length; start += itemBatchSize) {
     const orderIds = orders.slice(start, start + itemBatchSize).map((order) => order.id);
     const { data: items, error: itemsError } = await supabase
       .from("order_items")
-      .select("order_id, product_name, unit_price, quantity")
+      .select("order_id, product_name, unit_price, unit, quantity")
       .in("order_id", orderIds);
 
     if (itemsError) {
@@ -116,6 +116,7 @@ export async function POST(request: NextRequest) {
         items: (itemsByOrderId.get(order.id) ?? []).map((item) => ({
           name: item.product_name,
           unitPrice: item.unit_price,
+          unit: item.unit,
           quantity: item.quantity,
         })),
       })),

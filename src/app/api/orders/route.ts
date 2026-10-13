@@ -2,6 +2,7 @@ import { randomInt } from "node:crypto";
 import { NextResponse, type NextRequest } from "next/server";
 import { createServiceRoleClient } from "@/lib/supabase/admin";
 import { checkSubmissionRateLimit } from "@/lib/storefront/rate-limit";
+import { getProductUnit } from "@/lib/storefront/product-unit";
 import { checkoutSchema, isValidVietnamesePhone } from "@/lib/validation/order";
 import { siteConfig } from "@/config/site";
 
@@ -85,7 +86,7 @@ export async function POST(request: NextRequest) {
   const supabase = createServiceRoleClient();
   const { data: products, error: productsError } = await supabase
     .from("products")
-    .select("id, name, slug, price")
+    .select("id, name, slug, price, unit")
     .in("slug", [...requestedItems.keys()])
     .eq("is_active", true);
 
@@ -105,6 +106,7 @@ export async function POST(request: NextRequest) {
     product_id: product.id,
     product_name: product.name,
     unit_price: product.price,
+    unit: getProductUnit(product.slug, product.unit),
     quantity: requestedItems.get(product.slug)!,
   }));
   const subtotal = items.reduce(

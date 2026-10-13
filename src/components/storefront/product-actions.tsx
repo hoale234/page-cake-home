@@ -15,7 +15,7 @@ export function ProductActions({ product }: { product: CartProduct }) {
   }
 
   return (
-    <div className="flex flex-col items-stretch gap-2 sm:flex-row sm:items-center">
+    <div className="flex w-full flex-col items-stretch gap-2 sm:w-auto sm:flex-row sm:items-center">
       <div className="flex w-full flex-col items-stretch gap-2 sm:w-auto sm:flex-row sm:items-center">
         <div
           className="flex w-full items-center justify-between gap-2 sm:w-auto sm:justify-start"

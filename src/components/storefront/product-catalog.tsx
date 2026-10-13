@@ -2,6 +2,7 @@ import Image from "next/image";
 import { Star } from "lucide-react";
 import { ProductActions } from "@/components/storefront/product-actions";
 import { createPublicSupabaseClient, type StoreProduct } from "@/lib/supabase/public";
+import { getProductUnit } from "@/lib/storefront/product-unit";
 
 const previewProducts: StoreProduct[] = [
   {
@@ -19,7 +20,7 @@ const previewProducts: StoreProduct[] = [
     slug: "banh-tai-khong-duong",
     description: "Bánh tai không đường, thơm béo.",
     price: 50000,
-    unit: "500g",
+    unit: "400g",
     image_url: "/images/banh-tai-san-pham-tam.png",
   },
 ];
@@ -31,11 +32,9 @@ function formatPrice(price: number) {
 export async function ProductCatalog() {
   const supabase = createPublicSupabaseClient();
   let products: StoreProduct[];
-  let isPreview = false;
 
   if (!supabase) {
     products = previewProducts;
-    isPreview = true;
   } else {
     const { data, error } = await supabase
       .from("products")
@@ -52,7 +51,10 @@ export async function ProductCatalog() {
       );
     }
 
-    products = (data ?? []) as StoreProduct[];
+    products = (data ?? []).map((product) => ({
+      ...product,
+      unit: getProductUnit(product.slug, product.unit),
+    })) as StoreProduct[];
   }
 
   if (products.length === 0) {
@@ -109,6 +111,7 @@ export async function ProductCatalog() {
                     slug: product.slug,
                     name: product.name,
                     price: product.price,
+                    unit: product.unit,
                     image: product.image_url,
                   }}
                 />

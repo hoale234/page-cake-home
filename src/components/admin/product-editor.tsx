@@ -24,6 +24,7 @@ const allowedImageTypes = new Set(["image/jpeg", "image/png", "image/webp", "ima
 const maxImageSize = 5 * 1024 * 1024;
 
 export function ProductEditor(product: ProductEditorProps) {
+  const [description, setDescription] = useState(product.description);
   const [price, setPrice] = useState(String(product.price));
   const [isActive, setIsActive] = useState(product.isActive);
   const [imageUrl, setImageUrl] = useState(product.imageUrl);
@@ -42,6 +43,7 @@ export function ProductEditor(product: ProductEditorProps) {
     try {
       const result = await updateProduct({
         id: product.id,
+        description,
         price: nextPrice,
         is_active: isActive,
       });
@@ -120,7 +122,6 @@ export function ProductEditor(product: ProductEditorProps) {
           src={imageUrl}
           alt={`Ảnh ${product.name}`}
           fill
-          unoptimized
           sizes="(max-width: 768px) 100vw, 50vw"
           className="object-cover"
         />
@@ -135,8 +136,20 @@ export function ProductEditor(product: ProductEditorProps) {
       <div className="space-y-5 p-5 sm:p-6">
         <div>
           <h2 className="font-serif text-xl font-bold text-brown">{product.name}</h2>
-          <p className="mt-2 min-h-12 text-sm leading-6 text-brown/60">{product.description}</p>
         </div>
+        <label className="block text-sm font-semibold text-brown">
+          Mô tả sản phẩm
+          <textarea
+            value={description}
+            maxLength={500}
+            rows={3}
+            onChange={(event) => setDescription(event.target.value)}
+            className="mt-1.5 w-full resize-y rounded-xl border border-brown/15 bg-[#fffefa] px-3 py-2 text-sm font-normal leading-6 outline-none focus:border-terracotta"
+          />
+          <span className="mt-1 block text-right text-xs font-normal text-brown/45">
+            {description.length}/500 ký tự
+          </span>
+        </label>
         <label className="block text-sm font-semibold text-brown">
           Giá bán / {product.unit}
           <div className="relative mt-1.5">
