@@ -1,10 +1,10 @@
 import type { Metadata } from "next";
-import { Clock3, MapPin, MessageCircle, Phone } from "lucide-react";
+import { Clock3, Phone } from "lucide-react";
 import { siteConfig } from "@/config/site";
 
 export const metadata: Metadata = {
   title: "Liên hệ cửa hàng",
-  description: "Gọi điện, nhắn Zalo hoặc gửi lời nhắn cho cửa hàng bánh tai.",
+  description: "Gọi điện, nhắn Facebook hoặc gửi lời nhắn cho cửa hàng bánh tai.",
 };
 
 export default function ContactPage() {
@@ -38,16 +38,18 @@ export default function ContactPage() {
           </span>
         </a>
         <a
-          href={siteConfig.zaloUrl || "#contact-message"}
-          target={siteConfig.zaloUrl ? "_blank" : undefined}
-          rel={siteConfig.zaloUrl ? "noreferrer" : undefined}
-          className="flex min-h-16 items-center gap-3 rounded-2xl border border-brown/10 bg-white p-3.5 transition hover:border-[#1778f2]/40"
+          href={siteConfig.facebookUrl || "#contact-message"}
+          target={siteConfig.facebookUrl ? "_blank" : undefined}
+          rel={siteConfig.facebookUrl ? "noreferrer" : undefined}
+          className="flex min-h-16 items-center gap-3 rounded-2xl border border-brown/10 bg-white p-3.5 transition hover:border-[#1877f2]/40"
         >
-          <span className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-[#1778f2]/10 text-[#1778f2]">
-            <MessageCircle className="size-5" />
+          <span className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-[#1877f2]/10 text-[#1877f2]">
+            <svg aria-hidden="true" viewBox="0 0 24 24" className="size-5 fill-current">
+              <path d="M13.5 21.95v-8.1h2.7l.4-3.15h-3.1V8.69c0-.91.25-1.53 1.56-1.53h1.66V4.34c-.29-.04-1.28-.12-2.43-.12-2.41 0-4.06 1.47-4.06 4.17v2.32H7.5v3.15h2.73v8.1h3.27Z" />
+            </svg>
           </span>
           <span>
-            <span className="block text-[11px] font-semibold text-brown/50">Zalo</span>
+            <span className="block text-[11px] font-semibold text-brown/50">Facebook</span>
             <span className="mt-0.5 block text-sm font-bold text-brown">Nhắn shop ngay</span>
           </span>
         </a>

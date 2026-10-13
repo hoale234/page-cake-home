@@ -7,6 +7,7 @@ import { requireAdmin } from "@/lib/auth/require-admin";
 const productIdSchema = z.string().uuid();
 const productUpdateSchema = z.object({
   id: productIdSchema,
+  description: z.string().trim().max(500),
   price: z.number().int().min(1).max(10_000_000),
   is_active: z.boolean(),
 });
@@ -25,6 +26,7 @@ export async function updateProduct(input: unknown) {
   const { data, error } = await supabase
     .from("products")
     .update({
+      description: parsed.data.description,
       price: parsed.data.price,
       is_active: parsed.data.is_active,
     })
@@ -42,6 +44,7 @@ export async function updateProduct(input: unknown) {
 
   revalidatePath("/admin/products");
   revalidatePath("/", "page");
+  revalidatePath("/san-pham");
   return { success: true };
 }
 

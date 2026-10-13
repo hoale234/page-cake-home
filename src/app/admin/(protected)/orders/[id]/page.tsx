@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import { connection } from "next/server";
 import { Suspense } from "react";
 import { ArrowLeft, MapPin, Phone, UserRound } from "lucide-react";
+import { CopyOrderInfoButton } from "@/components/admin/copy-order-info-button";
 import { OrderStatusSelect } from "@/components/admin/order-status-select";
 import { type OrderStatus } from "@/lib/admin/orders";
 import { requireAdmin } from "@/lib/auth/require-admin";
@@ -26,6 +27,7 @@ type OrderItem = {
   id: string;
   product_name: string;
   unit_price: number;
+  unit: string;
   quantity: number;
 };
 
@@ -44,7 +46,7 @@ async function OrderDetail({ params }: { params: Promise<{ id: string }> }) {
       supabase.from("orders").select("*").eq("id", id).maybeSingle(),
       supabase
         .from("order_items")
-        .select("id, product_name, unit_price, quantity")
+        .select("id, product_name, unit_price, unit, quantity")
         .eq("order_id", id)
         .order("id"),
     ]);
@@ -96,7 +98,7 @@ async function OrderDetail({ params }: { params: Promise<{ id: string }> }) {
                   <div>
                     <p className="font-bold">{item.product_name}</p>
                     <p className="mt-1 text-sm text-brown/55">
-                      {item.quantity} × {money(item.unit_price)} / 500g
+                      {item.quantity} × {money(item.unit_price)} / {item.unit}
                     </p>
                   </div>
                   <p className="font-bold">{money(item.quantity * item.unit_price)}</p>
@@ -121,15 +123,33 @@ async function OrderDetail({ params }: { params: Promise<{ id: string }> }) {
           <dl className="mt-5 space-y-4 text-sm">
             <div className="flex gap-3">
               <UserRound className="mt-0.5 size-4 shrink-0 text-terracotta" />
-              <div><dt className="text-xs text-brown/50">Khách hàng</dt><dd className="mt-1 font-bold">{orderData.customer_name}</dd></div>
+              <div className="min-w-0 flex-1">
+                <dt className="text-xs text-brown/50">Khách hàng</dt>
+                <dd className="mt-1 flex items-center gap-1 font-bold">
+                  <span className="min-w-0 break-words">{orderData.customer_name}</span>
+                  <CopyOrderInfoButton label="tên khách hàng" value={orderData.customer_name} />
+                </dd>
+              </div>
             </div>
             <div className="flex gap-3">
               <Phone className="mt-0.5 size-4 shrink-0 text-terracotta" />
-              <div><dt className="text-xs text-brown/50">Số điện thoại</dt><dd className="mt-1 font-bold"><a href={`tel:${orderData.phone}`}>{orderData.phone}</a></dd></div>
+              <div className="min-w-0 flex-1">
+                <dt className="text-xs text-brown/50">Số điện thoại</dt>
+                <dd className="mt-1 flex items-center gap-1 font-bold">
+                  <a href={`tel:${orderData.phone}`}>{orderData.phone}</a>
+                  <CopyOrderInfoButton label="số điện thoại" value={orderData.phone} />
+                </dd>
+              </div>
             </div>
             <div className="flex gap-3">
               <MapPin className="mt-0.5 size-4 shrink-0 text-terracotta" />
-              <div><dt className="text-xs text-brown/50">Địa chỉ</dt><dd className="mt-1 font-semibold leading-6">{orderData.address}</dd></div>
+              <div className="min-w-0 flex-1">
+                <dt className="text-xs text-brown/50">Địa chỉ</dt>
+                <dd className="mt-1 flex items-start gap-1 font-semibold leading-6">
+                  <span className="min-w-0 flex-1 break-words">{orderData.address}</span>
+                  <CopyOrderInfoButton label="địa chỉ" value={orderData.address} />
+                </dd>
+              </div>
             </div>
             <div className="border-t border-brown/10 pt-4">
               <dt className="text-xs text-brown/50">Phương thức thanh toán</dt>
@@ -139,8 +159,13 @@ async function OrderDetail({ params }: { params: Promise<{ id: string }> }) {
             </div>
             <div>
               <dt className="text-xs text-brown/50">Ghi chú</dt>
-              <dd className="mt-1 whitespace-pre-wrap leading-6">
-                {orderData.note || <span className="text-brown/40">Không có ghi chú</span>}
+              <dd className="mt-1 flex items-start gap-1 leading-6">
+                <span className="min-w-0 flex-1 whitespace-pre-wrap break-words">
+                  {orderData.note || <span className="text-brown/40">Không có ghi chú</span>}
+                </span>
+                {orderData.note ? (
+                  <CopyOrderInfoButton label="ghi chú" value={orderData.note} />
+                ) : null}
               </dd>
             </div>
           </dl>

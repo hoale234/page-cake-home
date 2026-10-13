@@ -20,6 +20,7 @@ type OrderDetails = {
   items: Array<{
     name: string;
     unitPrice: number;
+    unit: string;
     quantity: number;
   }>;
 };
@@ -158,7 +159,9 @@ export function OrderLookup() {
                   <ul className="mt-2 divide-y divide-brown/10">
                     {order.items.map((item, index) => (
                       <li key={`${item.name}-${index}`} className="flex justify-between gap-3 py-2 first:pt-0">
-                        <span className="text-sm text-brown">{item.name} × {item.quantity}</span>
+                        <span className="text-sm text-brown">
+                          {item.name} ({item.unit}) × {item.quantity}
+                        </span>
                         <span className="shrink-0 text-sm font-semibold text-brown">
                           {formatPrice(item.unitPrice * item.quantity)}đ
                         </span>

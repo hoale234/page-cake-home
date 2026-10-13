@@ -6,7 +6,7 @@ import { ProductCatalog } from "@/components/storefront/product-catalog";
 
 export const metadata: Metadata = {
   title: "Sản phẩm bánh tai",
-  description: "Chọn bánh tai có đường gừng hoặc không đường, 60.000đ / 500g.",
+  description: "Chọn bánh tai có đường gừng gói 500g hoặc không đường gói 400g.",
 };
 
 function ProductCatalogSkeleton() {
@@ -47,7 +47,7 @@ export default function ProductsPage() {
         </div>
         <div className="hidden items-center gap-1.5 rounded-full bg-white px-3 py-2 text-xs font-semibold text-brown/65 sm:inline-flex">
           <Truck className="size-4 text-terracotta" />
-          Giao hàng toàn quốc
+          <span>Ship đồng giá 15k</span>
         </div>
       </div>
       <Suspense fallback={<ProductCatalogSkeleton />}>

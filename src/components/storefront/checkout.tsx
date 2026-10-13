@@ -7,6 +7,7 @@ import { useForm } from "react-hook-form";
 import {
   ArrowRight,
   Check,
+  ChevronDown,
   Minus,
   Plus,
   ShoppingBag,
@@ -67,6 +68,7 @@ export function Checkout() {
   const removeItem = useCartStore((state) => state.removeItem);
   const clearCart = useCartStore((state) => state.clearCart);
   const [submitting, setSubmitting] = useState(false);
+  const [cartExpanded, setCartExpanded] = useState(false);
   const savedInfoValue = useSyncExternalStore(
     subscribeToSavedInfo,
     getSavedInfoSnapshot,
@@ -91,6 +93,7 @@ export function Checkout() {
   const subtotal = items.reduce((sum, item) => sum + item.price * item.quantity, 0);
   const shippingFee = items.length > 0 ? siteConfig.shippingFee : 0;
   const total = subtotal + shippingFee;
+  const itemCount = items.reduce((sum, item) => sum + item.quantity, 0);
 
   const {
     register,
@@ -228,8 +231,22 @@ export function Checkout() {
     }
   }
 
+  function resetCheckoutAfterSuccess() {
+    clearCart();
+    reset({
+      customer_name: savedInfo?.customer_name ?? "",
+      phone: savedInfo?.phone ?? "",
+      house_number: savedInfo?.house_number ?? "",
+      ward: savedInfo?.ward ?? "",
+      province: savedInfo?.province ?? "",
+      note: "",
+      payment_method: "cod",
+      website: "",
+    });
+    setSuccess(null);
+  }
+
   if (success) {
-    const zaloHref = siteConfig.zaloUrl || "/lien-he";
     return (
       <div className="mx-auto w-full max-w-lg space-y-5">
         <section
@@ -246,7 +263,7 @@ export function Checkout() {
             Cảm ơn bạn đã đặt bánh!
           </h2>
           <p className="mt-2 text-sm leading-6 text-brown/60">
-            Shop sẽ liên hệ xác nhận đơn và thời gian giao hàng.
+            Bạn sẽ nhận được hàng từ 3 - 5 ngày tới!
           </p>
           <div className="mt-5 rounded-2xl bg-cream p-4">
             <p className="text-xs text-brown/55">Mã đơn hàng</p>
@@ -271,6 +288,7 @@ export function Checkout() {
             </Link>
             <Link
               href="/san-pham"
+              onClick={resetCheckoutAfterSuccess}
               className="inline-flex h-11 items-center justify-center gap-2 rounded-full border border-brown/15 px-4 text-sm font-bold text-brown transition hover:border-terracotta hover:text-terracotta"
             >
               Xem thêm bánh <ArrowRight className="size-4" />
@@ -280,78 +298,109 @@ export function Checkout() {
       </div>
     );
   }
-
+  console.log(items, "item")
   return (
     <>
       <div className="grid gap-4 lg:grid-cols-[0.9fr_1.1fr]">
-        <section className="rounded-3xl border border-brown/10 bg-white p-4 shadow-sm sm:p-5">
-          <div className="mb-3 flex items-center justify-between border-b border-brown/10 pb-3">
+        <section className="overflow-hidden rounded-3xl border border-brown/10 bg-white p-0 shadow-sm lg:p-5">
+          <div className="lg:hidden">
+            <button
+              type="button"
+              aria-expanded={cartExpanded}
+              aria-controls="checkout-cart-items"
+              onClick={() => setCartExpanded((expanded) => !expanded)}
+              className="flex w-full items-center justify-between gap-3 border-b border-brown/10 px-4 py-4 text-left"
+            >
+              <span className="min-w-0 text-sm font-bold text-brown">
+                Đơn hàng ({itemCount} sản phẩm)
+              </span>
+              <span className="flex shrink-0 items-center gap-2">
+                <strong className="text-sm text-sky-600">{formatPrice(total)}đ</strong>
+                <ChevronDown
+                  aria-hidden="true"
+                  className={`size-4 text-brown transition-transform ${cartExpanded ? "rotate-180" : ""}`}
+                />
+              </span>
+            </button>
+          </div>
+          <div className="mb-3 hidden items-center justify-between border-b border-brown/10 pb-3 lg:flex">
             <div>
-              <h2 className="font-serif text-lg font-bold">Giỏ hàng của bạn</h2>
+              <h2 className="font-serif text-lg font-bold">Đơn hàng</h2>
               <p className="mt-0.5 text-xs text-brown/55">
-                {items.reduce((sum, item) => sum + item.quantity, 0)} sản phẩm
+                {itemCount} sản phẩm
               </p>
             </div>
             <ShoppingBag className="size-5 text-terracotta" />
           </div>
-          {items.length === 0 ? (
-            <div className="rounded-2xl bg-cream/70 px-4 py-6 text-center">
-              <p className="font-bold text-brown">Giỏ hàng đang trống</p>
-              <p className="mt-1 text-xs text-brown/55">Chọn bánh trước, shop chờ bạn nhé.</p>
-              <Link
-                href="/san-pham"
-                className="mt-3 inline-flex items-center gap-1.5 text-sm font-bold text-terracotta"
-              >
-                Xem sản phẩm <ArrowRight className="size-4" />
-              </Link>
-            </div>
-          ) : (
-            <ul className="divide-y divide-brown/10">
-              {items.map((item) => (
-                <li key={item.slug} className="flex flex-wrap items-center justify-between gap-2 py-3 first:pt-0">
-                  <div className="min-w-0 flex-1">
-                    <p className="text-sm font-bold text-brown">{item.name}</p>
-                    <p className="mt-0.5 text-xs text-brown/55">
-                      {formatPrice(item.price)}đ / 500g
-                    </p>
-                  </div>
-                  <div className="flex items-center gap-1.5">
-                    <button
-                      type="button"
-                      aria-label={`Giảm ${item.name}`}
-                      onClick={() => setQuantity(item.slug, item.quantity - 1)}
-                      className="flex size-8 items-center justify-center rounded-full border border-brown/15 text-brown hover:bg-cream"
-                    >
-                      <Minus className="size-3.5" />
-                    </button>
-                    <span className="min-w-5 text-center text-sm font-bold">{item.quantity}</span>
-                    <button
-                      type="button"
-                      aria-label={`Tăng ${item.name}`}
-                      onClick={() => setQuantity(item.slug, item.quantity + 1)}
-                      disabled={item.quantity >= 10}
-                      className="flex size-8 items-center justify-center rounded-full border border-brown/15 text-brown hover:bg-cream disabled:opacity-40"
-                    >
-                      <Plus className="size-3.5" />
-                    </button>
-                    <button
-                      type="button"
-                      aria-label={`Xóa ${item.name}`}
-                      onClick={() => removeItem(item.slug)}
-                      className="flex size-8 items-center justify-center rounded-full text-brown/45 transition hover:bg-red-50 hover:text-red-700"
-                    >
-                      <Trash2 className="size-4" />
-                    </button>
-                  </div>
-                </li>
-              ))}
-            </ul>
-          )}
-          {items.length > 0 ? (
-            <p className="mt-2 border-t border-brown/10 pt-3 text-right text-xs text-brown/55">
-              Bạn có thể chỉnh số lượng ở đây
-            </p>
-          ) : null}
+          <div
+            id="checkout-cart-items"
+            className={`${cartExpanded ? "block" : "hidden"} px-4 pb-4 mt-4 lg:block lg:px-0 lg:pb-0`}
+          >
+            {items.length === 0 ? (
+              <div className="rounded-2xl bg-cream/70 px-4 py-6 text-center">
+                <p className="font-bold text-brown">Giỏ hàng đang trống</p>
+                <p className="mt-1 text-xs text-brown/55">Chọn bánh trước, shop chờ bạn nhé.</p>
+                <Link
+                  href="/san-pham"
+                  className="mt-3 inline-flex items-center gap-1.5 text-sm font-bold text-terracotta"
+                >
+                  Xem sản phẩm <ArrowRight className="size-4" />
+                </Link>
+              </div>
+            ) : (
+              <ul className="divide-y divide-brown/10">
+                {items.map((item) => (
+                  <li key={item.slug} className="flex flex-wrap items-center justify-between gap-2 py-3 first:pt-0">
+                    <div className="min-w-0 flex-1">
+                      <p className="text-sm font-bold text-brown">
+                        {item.name}
+                      </p>
+                      <p className="mt-0.5 text-xs text-brown/55">
+                        {
+                          item.price
+                        } / {
+                          item.unit
+                        }
+                      </p>
+                    </div>
+                    <div className="flex items-center gap-1.5">
+                      <button
+                        type="button"
+                        aria-label={`Giảm ${item.name}`}
+                        onClick={() => setQuantity(item.slug, item.quantity - 1)}
+                        className="flex size-8 items-center justify-center rounded-full border border-brown/15 text-brown hover:bg-cream"
+                      >
+                        <Minus className="size-3.5" />
+                      </button>
+                      <span className="min-w-5 text-center text-sm font-bold">{item.quantity}</span>
+                      <button
+                        type="button"
+                        aria-label={`Tăng ${item.name}`}
+                        onClick={() => setQuantity(item.slug, item.quantity + 1)}
+                        disabled={item.quantity >= 10}
+                        className="flex size-8 items-center justify-center rounded-full border border-brown/15 text-brown hover:bg-cream disabled:opacity-40"
+                      >
+                        <Plus className="size-3.5" />
+                      </button>
+                      <button
+                        type="button"
+                        aria-label={`Xóa ${item.name}`}
+                        onClick={() => removeItem(item.slug)}
+                        className="flex size-8 items-center justify-center rounded-full text-brown/45 transition hover:bg-red-50 hover:text-red-700"
+                      >
+                        <Trash2 className="size-4" />
+                      </button>
+                    </div>
+                  </li>
+                ))}
+              </ul>
+            )}
+            {items.length > 0 ? (
+              <p className="mt-2 border-t border-brown/10 pt-3 text-right text-xs text-brown/55">
+                Bạn có thể chỉnh số lượng ở đây
+              </p>
+            ) : null}
+          </div>
         </section>
 
         <section className="rounded-3xl border border-brown/10 bg-white p-4 shadow-sm sm:p-5">

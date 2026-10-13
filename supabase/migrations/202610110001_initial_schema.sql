@@ -160,7 +160,7 @@ values
     'banh-tai-khong-duong',
     'Bánh tai không đường, thơm béo.',
     60000,
-    '500g',
+    '400g',
     '/images/banh-tai-san-pham-tam.png',
     2
   );

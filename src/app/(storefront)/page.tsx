@@ -5,16 +5,18 @@ import { siteConfig } from "@/config/site";
 
 export default function HomePage() {
   return (
-    <section className="mx-auto grid w-full max-w-5xl flex-1 items-center gap-8 px-4 py-8 sm:px-6 md:grid-cols-2 md:py-12">
-      <div className="relative mx-auto aspect-[4/3] w-full max-w-xl overflow-hidden rounded-[2rem] border-8 border-white bg-[#ead5b8] shadow-xl shadow-brown/10">
-        <Image
-          src="/images/banh-tai-duong-gung1.png"
-          alt="Bánh tai có đường"
-          fill
-          priority
-          sizes="(max-width: 768px) 100vw, 50vw"
-          className="object-cover"
-        />
+    <section className="mx-auto grid w-full max-w-5xl flex-1 items-start px-4 py-8 sm:px-6 md:grid-cols-2 md:items-center md:gap-8 md:py-12">
+      <div className="mt-8 flex items-center justify-center md:mb-0">
+        <div className="relative mx-auto aspect-[4/3] w-full max-w-xl overflow-hidden rounded-[2rem] border-8 border-white bg-[#ead5b8] shadow-xl shadow-brown/10">
+          <Image
+            src="/images/banh-tai-duong-gung1.png"
+            alt="Bánh tai có đường"
+            fill
+            priority
+            sizes="(max-width: 768px) 100vw, 50vw"
+            className="object-cover"
+          />
+        </div>
       </div>
       <div className="mx-auto max-w-xl text-center md:text-left">
         <p className="text-xs font-bold uppercase tracking-[0.18em] text-terracotta sm:text-sm">
@@ -29,7 +31,7 @@ export default function HomePage() {
         <ul className="mt-5 flex flex-wrap justify-center gap-2 md:justify-start">
           {[
             { icon: Truck, text: "Ship đồng giá 15k" },
-            { icon: Check, text: "60k / 500g" },
+            { icon: Check, text: "Gói 400g và 500g" },
           ].map(({ icon: Icon, text }) => (
             <li
               key={text}
