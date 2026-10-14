@@ -20,6 +20,9 @@ export const metadata: Metadata = {
     template: `%s | ${siteConfig.name}`,
   },
   description: siteConfig.description,
+  verification: {
+    google: "google2fd630f94c7c4726",
+  },
   openGraph: {
     type: "website",
     locale: "vi_VN",
